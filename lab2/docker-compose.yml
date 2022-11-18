@@ -8,37 +8,36 @@ services:
       - "5002:5000"
     networks:
       - network-b
-    environment:
-      - MODEL_REPO=/usr/src/myapp/models2
     volumes:
-      - "/home/rijkersniek/models:/src/usr/models2"
-  prediction-api:
+      - "/home/indika_kuma/models:/usr/src/myapp/models"
+  prediction_api:
     build:
       context: prediction-api
     container_name: prediction_api
-    depends_on: training_api
+    depends_on:
+      - training_api
     ports:
       - "5001:5000"
     networks:
       - network-a
       - network-b
     environment:
-      - MODEL_REPO=/usr/src/myapp/models2
+      - MODEL_REPO=/usr/src/myapp/models
     volumes:
-      - "/home/rijkersniek/models:/src/usr/models2"
-  prediction-ui:
+      - "/home/indika_kuma/models:/usr/src/myapp/models"
+  prediction_ui:
     build:
       context: prediction-ui
-      ports:
-        - "5000:5000"
-      networks:
-        - network-a
-      environment:
-        - PREDICTOR_API=http://predictor-api-server:5000/diabetes_predictor
+    container_name: prediction_ui
+    depends_on:
+      - prediction_api
+    ports:
+      - "5000:5000"
+    networks:
+      - network-a
+    environment:
+      - PREDICTOR_API=http://prediction_api:5000/diabetes_predictor
+
 networks:
-  network-a
-  network-b
-
-
-
-    
+  network-a:
+  network-b:
